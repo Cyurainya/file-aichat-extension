@@ -6,8 +6,15 @@ import manifest from './manifest.json'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(),crx({ manifest })],
+
   server: {
-    host: '127.0.0.1',
-    port: 5500
+    port: 5500,
+    proxy: {
+      '/apiChat': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/apiChat/, '')
+      }
+    },
   }
 })

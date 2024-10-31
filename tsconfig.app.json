@@ -22,5 +22,5 @@
     "noUncheckedSideEffectImports": true,
     "resolveJsonModule": true
   },
-  "include": ["src", "src/background/service-worker.ts"]
+  "include": ["src", "src/background/service-worker.js"]
 }
