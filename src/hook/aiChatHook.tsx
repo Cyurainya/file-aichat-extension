@@ -1,46 +1,42 @@
-import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
-import {  useEffect, useState } from "react";
-import { useImmer } from "use-immer";
-import TurndownService from 'turndown';
-import { gfm, tables, strikethrough } from "turndown-plugin-gfm";
-
+import { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
+import { SetStateAction, useEffect, useState } from 'react'
+import { useImmer } from 'use-immer'
+import { html2md, isChromeExtension } from '../utils'
 
 export const aiChatHook = () => {
   const [error, setError] = useImmer<boolean>(false)
   const [loading, setLoading] = useImmer<boolean>(false)
-  const [messages, setMessages] = useImmer<ChatCompletionMessageParam[]>([]);
+  const [messages, setMessages] = useImmer<ChatCompletionMessageParam[]>([])
   const [content, setContent] = useState<string>('')
-
-  function html2md(htmlString: any) {
-    const turndownService = new TurndownService({ codeBlockStyle: 'fenced' })
-    // Use the gfm plugin
-    turndownService.use([gfm, tables, strikethrough])
-    // 自定义配置
-
-    const markdown = turndownService.turndown(htmlString)
-    return markdown
-  }
 
   const sendMessage = async (msg: string) => {
     setLoading(true)
     setError(false)
     try {
-      setMessages(prev => [...prev, { role: 'user', content: msg }])
+      setMessages((prev) => [...prev, { role: 'user', content: msg }])
       const markdownStr = html2md(content)
-      console.log('markdownStr',markdownStr)
-      const response = await fetch('http://localhost:3000/api/chat/completions', {
+      const host = process.env.VITE_API_HOST
+      console.log('hots',host)
+      const response = await fetch(`${host}/api/chat/completions`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ message: [{ role: 'user', content: `我有这么一个文章(markdown形式的): ${markdownStr},${msg}` }] })
+        body: JSON.stringify({
+          message: [
+            {
+              role: 'user',
+              content: `我有这么一个文章(markdown形式的): ${markdownStr}。\n 我想问：${msg}`
+            }
+          ]
+        })
       })
       const data = await response?.json()
       const newMsg = {
         content: data?.response?.content,
         role: 'system'
       }
-      setMessages(prev => [...prev, newMsg])
+      setMessages((prev) => [...prev, newMsg])
       setError(false)
     } catch (e) {
       console.log(e)
@@ -51,17 +47,32 @@ export const aiChatHook = () => {
   }
 
   useEffect(() => {
-    // 向背景脚本请求页面内容\
-    // @ts-ignore
-    chrome.runtime.sendMessage({ type: "GET_CONTENT" }, (response) => {
-      if (response && response.content) {
-        setContent(response.content); // 设置获取的内容
-      } else {
-        setContent("");
-      }
-    });
-  }, []);
+    // 向背景脚本请求页面内容
+    let listener: any
+    if (isChromeExtension()) {
+      // @ts-ignore
+      chrome.runtime.sendMessage({ type: 'REQUEST_MAIN_CONTENT' }, (response) => {
+        if (response && response.content) {
+          setContent(response.content)
+        }
+      })
 
+      // Listen for updates from the background script
+      listener = (message: { type: string; content: SetStateAction<string> }) => {
+        if (message.type === 'CONTENT_UPDATE') {
+          setContent(message.content)
+        }
+        return undefined
+      }
+      chrome.runtime.onMessage.addListener(listener)
+    }
+
+    return () => {
+      if (isChromeExtension()) {
+        chrome.runtime.onMessage.removeListener(listener)
+      }
+    }
+  }, [])
 
   return {
     messages,
@@ -70,5 +81,4 @@ export const aiChatHook = () => {
     sendMessage,
     content
   }
-
 }

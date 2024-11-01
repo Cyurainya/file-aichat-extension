@@ -1,6 +1,6 @@
 #root {
   background-color: #f8ff0345;
-  height: 500px;
+  /* height: 500px; */
   width: 400px;
   padding: 10px;
 }
@@ -28,7 +28,7 @@
         background-color: #ffffffdb;
         padding: 10px;
         border-radius: 10px;
-        max-width: fit-content;
+        width: 90%;
         overflow-x: scroll;
       }
 

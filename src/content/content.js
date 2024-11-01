@@ -1,14 +1,30 @@
-// content.js
+// contentScript.js
 
-window.onload = () => {
-  // 页面加载完成后执行
-  const contentElement = document.getElementsByTagName('article');
-  console.log('contentElement',contentElement)
-  if (contentElement) {
-    const contentHTML = contentElement[0].innerHTML;
-    // 发送消息到背景脚本，包含页面的 content 内容
-    chrome.runtime.sendMessage({ type: "SEND_CONTENT", content: contentHTML });
-  } else {
-    console.warn("未找到 ID 为 content 的元素");
+function sendMainContent() {
+  const mainElement = document.getElementById('main-content')
+
+  if (mainElement) {
+    let content = mainElement.innerHTML
+    const startTag = '<div id="main-content" class="wiki-content">'
+    if (content.startsWith(startTag)) {
+      content = content.slice(startTag.length)
+    }
+
+    // 判断结尾是否有 </div> 并去除
+    const endTag = '</div>'
+    if (content.endsWith(endTag)) {
+      content = content.slice(0, -endTag.length)
+    }
+    chrome.runtime.sendMessage({ type: 'UPDATE_MAIN_CONTENT', content })
   }
-};
+}
+
+// Initial fetch of content when the script is loaded
+sendMainContent()
+
+// Set up a MutationObserver to watch for changes in the "main" element
+const mainElement = document.getElementById('main-content')
+if (mainElement) {
+  const observer = new MutationObserver(sendMainContent)
+  observer.observe(mainElement, { childList: true, subtree: true })
+}

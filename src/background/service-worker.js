@@ -1,21 +1,23 @@
-// background.js
 
-let pageContent = '';
 
+let mainContent = "";
+
+// Listen for messages from the content script
 // @ts-ignore
-chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  if (message.type === "SEND_CONTENT") {
-    pageContent = message.content; // 保存 content 内容
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === "UPDATE_MAIN_CONTENT") {
+    mainContent = message.content;
+
+    // Send updated content to popup if it's open
+    chrome.runtime.sendMessage({ type: "CONTENT_UPDATE", content: mainContent });
   }
 });
 
-// 供 popup.js 获取数据
+// Handle popup requesting the latest content
+// @ts-ignore
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  if (message.type === "GET_CONTENT") {
+  if (message.type === "REQUEST_MAIN_CONTENT") {
     // @ts-ignore
-    sendResponse({ content: pageContent });
+    sendResponse({ content: mainContent });
   }
-
-  // 返回 true 以保持消息通道打开，以便异步调用 sendResponse
-  return true;
 });
