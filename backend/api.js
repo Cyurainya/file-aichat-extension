@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import bodyParser from 'body-parser';
 
 const app = express();
+// @ts-ignore
 app.use(bodyParser.json());
 
 const client = new OpenAI({
@@ -40,12 +41,26 @@ app.use((req, res, next) => {
 app.post('/api/chat/completions', async (req, res) => {
   try {
     const messages = req.body.message;
-    console.log('messgaes',messages)
     if (!messages) {
       return res.status(400).json({ error: 'Message parameter is required' });
     }
-    const response = await getAiChat(messages);
-    res.json({ response });
+    const stream = await client.chat.completions.create({
+      model: "moonshot-v1-8k",
+      messages,
+      temperature: 0.3,
+      stream: true,
+    });
+
+    res.setHeader('Content-Type', 'text/plain');
+
+    for await (const chunk of stream) {
+      const delta = chunk.choices[0].delta;
+      if (delta.content) {
+        res.write(delta.content);
+      }
+    }
+
+    res.end();
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

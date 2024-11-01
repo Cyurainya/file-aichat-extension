@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "service-start": "nodemon ./backend/api.js",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -16,6 +17,7 @@
     "express": "^4.21.1",
     "highlight.js": "^11.10.0",
     "nanoid": "^5.0.8",
+    "nodemon": "^3.1.7",
     "openai": "^4.68.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -32,6 +34,7 @@
   "devDependencies": {
     "@crxjs/vite-plugin": "2.0.0-beta.28",
     "@eslint/js": "^9.13.0",
+    "@tailwindcss/typography": "^0.5.15",
     "@types/express": "^5.0.0",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",

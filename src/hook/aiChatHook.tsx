@@ -16,7 +16,7 @@ export const aiChatHook = () => {
       setMessages((prev) => [...prev, { role: 'user', content: msg }])
       const markdownStr = html2md(content)
       const host = process.env.VITE_API_HOST
-      console.log('hots',host)
+
       const response = await fetch(`${host}/api/chat/completions`, {
         method: 'POST',
         headers: {
@@ -31,15 +31,27 @@ export const aiChatHook = () => {
           ]
         })
       })
-      const data = await response?.json()
-      const newMsg = {
-        content: data?.response?.content,
-        role: 'system'
+      // const data = await response?.json();
+      const reader = response?.body?.getReader()
+      let msgContent = ''
+      setMessages((prev) => [...prev, { content: msgContent, role: 'system' }])
+      const textDecoder = new TextDecoder() // 创建解码器
+      while (true && reader) {
+        // 循环读取内容
+        /* 读取其中一部分内容 done 是否读取完成， value 读取到的内容 */
+        const { done, value } = await reader.read()
+        if (done) {
+          return
+        }
+        const str = textDecoder.decode(value) // 利用解码器把数据解析成字符串
+        msgContent += str
+        setMessages((prev) =>  [...prev.slice(0, prev?.length - 1), { content: msgContent, role: 'system' }])
+        console.log(str) // 这时候str就是服务器返回的内容
       }
-      setMessages((prev) => [...prev, newMsg])
+
       setError(false)
     } catch (e) {
-      console.log(e)
+      setMessages((prev) => [...prev, { content: '回答出错!', role: 'system' }])
       setError(true)
     } finally {
       setLoading(false)

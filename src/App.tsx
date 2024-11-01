@@ -28,15 +28,26 @@ function App() {
     // setMarkdownOutput(markdown);
   }
 
-  const handleKeyUp = (event: any) => {
+  const handleKeyDown = (event: any) => {
+    console.log('event.key', event.key)
+    console.log('event.shiftKey', event.shiftKey)
+
     if (event.key === 'Enter') {
-      sendMsg()
+      event.preventDefault()
+
+      if (event.shiftKey) {
+        console.log('黄行')
+        setInputVal((pre) => pre + '\n')
+      } else {
+        console.log('发送')
+        sendMsg()
+      }
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(process.env.VITE_API_HOST)
-  },[])
+  }, [])
 
   return (
     <div id='chromeBox'>
@@ -44,11 +55,17 @@ function App() {
         {
           // @ts-ignore
           messages?.length > 0 ? (
-            <div className='messageBox'>
+            <div className='overflow-y-scroll h-80 my-2'>
               {
                 // @ts-ignore
                 messages?.map((item: { role: string | undefined; content: string }) => (
-                  <div className={item?.role === 'user' ? 'user' : 'system'} key={nanoid()}>
+                  <div
+                    className={
+                      item?.role === 'user'
+                        ? 'p-2'
+                        : 'p-2 bg-white overflow-x-scroll w-80 rounded-sm'
+                    }
+                    key={nanoid()}>
                     {item?.role === 'user' ? (
                       <span>{item?.content?.toString()}</span>
                     ) : (
@@ -71,10 +88,10 @@ function App() {
         {/* {loading ? <div className='loadingBox'><Spin size='small'></Spin>正在回答中...</div> : <></>} */}
 
         <div className='inputBox'>
-          <Input
+          <Input.TextArea
             allowClear
             value={inputVal}
-            onKeyUp={handleKeyUp}
+            onKeyDown={handleKeyDown}
             onChange={(event: any) => {
               setInputVal(event.target.value)
             }}

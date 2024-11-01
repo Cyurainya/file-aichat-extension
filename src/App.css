@@ -20,22 +20,6 @@
   }
   .contentBox {
 
-    .messageBox {
-      height: 400px;
-      overflow-y: scroll;
-
-      .system {
-        background-color: #ffffffdb;
-        padding: 10px;
-        border-radius: 10px;
-        width: 90%;
-        overflow-x: scroll;
-      }
-
-      .user {
-        padding: 10px;
-      }
-    }
 
     .emptyBox {
       opacity: 0;
@@ -55,7 +39,7 @@
   .inputBox {
     align-items: center;
     display: flex;
-
+    margin: 10px 0 5px;
     .button {
       width: 50px;
       height: 40px;
