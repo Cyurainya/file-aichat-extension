@@ -20,7 +20,7 @@ function sendMainContent() {
 }
 
 // Initial fetch of content when the script is loaded
-
+sendMainContent();
 // @ts-ignore
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === 'REQUEST_MAIN_CONTENT') {
