@@ -7,7 +7,6 @@ export  function html2md(htmlString: any) {
   // 自定义配置
 
   const markdown = turndownService.turndown(htmlString)
-  console.log('markdown',markdown)
 
   return markdown
 }

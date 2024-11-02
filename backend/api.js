@@ -11,20 +11,6 @@ const client = new OpenAI({
   baseURL: "https://api.moonshot.cn/v1",
 });
 
-const getAiChat = async (messages) => {
-  try {
-    const completion = await client.chat.completions.create({
-      model: "moonshot-v1-8k",
-      messages,
-      temperature: 0.3,
-    });
-    console.log(completion)
-    return completion.choices[0].message;
-  } catch (error) {
-    console.error('Error fetching AI response:', error);
-    throw new Error('AI response error');
-  }
-};
 
 // 设置跨域访问
 app.use((req, res, next) => {

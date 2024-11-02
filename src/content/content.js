@@ -22,6 +22,7 @@ function sendMainContent() {
 // Initial fetch of content when the script is loaded
 sendMainContent()
 
+
 // Set up a MutationObserver to watch for changes in the "main" element
 const mainElement = document.getElementById('main-content')
 if (mainElement) {

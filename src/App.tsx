@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid'
 
 // import TurndownService from 'turndown';
 import remarkGfm from 'remark-gfm'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 // import { gfm, tables, strikethrough } from 'turndown-plugin-gfm'
 import './App.css'
@@ -18,7 +18,7 @@ function App() {
   const { messages, sendMessage, content } = aiChatHook()
 
   const sendMsg = async () => {
-    console.log('send')
+
     sendMessage(inputVal.toString())
     // sendMessage && sendMessage(inputVal.toString());
     setInputVal('')
@@ -29,25 +29,22 @@ function App() {
   }
 
   const handleKeyDown = (event: any) => {
-    console.log('event.key', event.key)
-    console.log('event.shiftKey', event.shiftKey)
+
 
     if (event.key === 'Enter') {
       event.preventDefault()
 
       if (event.shiftKey) {
-        console.log('黄行')
+
         setInputVal((pre) => pre + '\n')
       } else {
-        console.log('发送')
+
         sendMsg()
       }
     }
   }
 
-  useEffect(() => {
-    console.log(process.env.VITE_API_HOST)
-  }, [])
+
 
   return (
     <div id='chromeBox'>
