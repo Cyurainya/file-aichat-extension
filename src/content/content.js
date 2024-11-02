@@ -20,8 +20,15 @@ function sendMainContent() {
 }
 
 // Initial fetch of content when the script is loaded
-sendMainContent()
 
+// @ts-ignore
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message.type === 'REQUEST_MAIN_CONTENT') {
+    const content = sendMainContent(); // 获取 DOM 内容
+    // @ts-ignore
+    sendResponse({ content });
+  }
+});
 
 // Set up a MutationObserver to watch for changes in the "main" element
 const mainElement = document.getElementById('main-content')
