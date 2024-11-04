@@ -1,6 +1,6 @@
  {
   "manifest_version": 3,
-  "name": "CRXJS React Vite Example",
+  "name": "小雨点wiki智能阅读工具",
   "version": "1.0.0",
   "action": {
     "default_popup": "index.html"
@@ -8,7 +8,9 @@
   "background": {
     "service_worker": "./src/background/service-worker.js"
   },
-
+  "default_icon": {
+    "12": "./src/assets/chatai.jpg"
+  },
   "content_scripts": [
     {
       "js": [

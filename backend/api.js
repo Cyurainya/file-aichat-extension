@@ -27,6 +27,7 @@ app.use((req, res, next) => {
 app.post('/api/chat/completions', async (req, res) => {
   try {
     const messages = req.body.message;
+    console.log(messages)
     if (!messages) {
       return res.status(400).json({ error: 'Message parameter is required' });
     }

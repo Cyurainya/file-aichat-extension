@@ -1,15 +1,11 @@
 import chatai from './assets/chatai.jpg'
 import sendLogo from './assets/send.svg'
 import { nanoid } from 'nanoid'
-
-// import TurndownService from 'turndown';
-import remarkGfm from 'remark-gfm'
 import { useState } from 'react'
-import ReactMarkdown from 'react-markdown'
-// import { gfm, tables, strikethrough } from 'turndown-plugin-gfm'
 import './App.css'
 import { Input } from 'antd'
 import { aiChatHook } from './hook/aiChatHook'
+import { MarkdownBox } from './components/markdown'
 
 function App() {
   // const [markdownOutput, setMarkdownOutput] = useState<string>('');
@@ -66,7 +62,7 @@ function App() {
                     {item?.role === 'user' ? (
                       <span>{item?.content?.toString()}</span>
                     ) : (
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{item?.content}</ReactMarkdown>
+                     <MarkdownBox content={item.content} />
                     )}
                   </div>
                 ))
